@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  tts-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8502:8502"
+    volumes:
+      - ./generated_audio:/app/generated_audio
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_ENV=production
+      - FLASK_SECRET_KEY=${FLASK_SECRET_KEY:-your-secret-key-here}
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
